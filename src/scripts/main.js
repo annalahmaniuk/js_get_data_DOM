@@ -2,18 +2,22 @@
 
 const spans = document.querySelectorAll('.population');
 
-let cleanSpans = [...spans];
+const populations = [...spans]
+  .map((span) => {
+    const cleaned = span.innerText.replaceAll(',', '');
+    const num = Number(cleaned);
 
-cleanSpans = cleanSpans.map((span) => {
-  return Number(span.innerText.replaceAll(',', ''));
-});
+    return Number.isFinite(num) ? num : null;
+  })
+  .filter((num) => num !== null);
 
-const total = cleanSpans.reduce((result, num) => {
-  return result + num;
-}, 0);
+const total = populations.reduce((sum, num) => sum + num, 0);
 
-const average = Math.round(total / cleanSpans.length);
-
-document.querySelector('.average-population').innerText = String(average);
+const average = populations.length > 0 ? total / populations.length : 0;
 
 document.querySelector('.total-population').innerText = total.toLocaleString();
+
+document.querySelector('.average-population').innerText =
+  average.toLocaleString(undefined, {
+    maximumFractionDigits: 0,
+  });
